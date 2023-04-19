@@ -1,0 +1,189 @@
+openapi: 3.0.3
+info:
+  title: Parameterübergabe mit GET und POST
+  description: Parameterübergabe mit GET und POST
+  contact:
+    name: Emily Cwienk
+    email: emily.cwienk@web.de
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: '0.1'
+servers:
+  - url: http://127.0.0.1:5000
+paths:
+  /todo-list/{list_id}:
+    get:
+      summary: Einträge anzeigen
+      description: Liefert alle Einträge einer Liste zurück
+      operationId: get
+      parameters:
+        - in: path
+          name: list_id
+          required: true
+          schema:
+            type: string
+       
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListEntries'
+        '404':
+          description: Wrong or missing ID
+    delete:
+      summary: Eintrag löschen
+      description: Löscht eine Liste
+      operationId: delete_list
+      parameters:
+        - in: path
+          name: list_id
+          required: true
+          schema:
+            type: string
+       
+      responses:
+        '200':
+          description: Successful operation
+        '404':
+          description: Wrong or missing ID
+  /todo-list:
+    post:
+      summary: Liste hinzufügen
+      description: Erstellt eine neue Todo Liste
+      operationId: post_list
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/List' 
+  /todo-list/{list_id}/entry:
+    post:
+      summary: Eintrag hinzufügen
+      description: Erstellt einen neuen Eintrag in einer bestehenden Liste
+      operationId: post_entry
+      parameters:
+        - in: path
+          name: list_id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Entry'
+        '404':
+          description: Wrong or missing ID
+        '400':
+          description: Wrong or missing Data
+                
+  /todo-list/{list_id}/entry/{entry_id}:
+    put:
+      summary: Eintrag aktualisieren
+      description: Ersetzt den bestehenden Eintrag an gleicher Stelle
+      operationId: put_entry
+      parameters:
+        - in: path
+          name: list_id
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: entry_id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Entry'
+        '404':
+          description: Wrong or missing ID
+        '400':
+          description: Wrong or missing Data
+  
+    delete:
+      summary: Eintrag löschen
+      description: Löscht einen Eintrag aus einer bestehende Todo Liste
+      operationId: delete_entry
+      parameters:
+        - in: path
+          name: list_id
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: entry_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+        '404':
+          description: Wrong or missing ID
+components:
+  schemas:
+    List:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+    ListEntries: 
+      type: object
+      properties:
+        entries: 
+          $ref: '#/components/schemas/Entry'
+    Entry:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        
